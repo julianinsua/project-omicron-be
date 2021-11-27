@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 import bodyParser from 'body-parser'
-import { Navigation } from './Router'
-import { mainRoutes } from './Routes/mainRoutes'
+import { Navigation } from 'src/services/http/Router'
+import { mainRoutes } from 'src/services/http/Routes/mainRoutes'
 
 export class Server {
   app: Express

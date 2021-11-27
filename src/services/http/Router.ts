@@ -3,7 +3,7 @@ import {
   Middleware,
   RouteInterface,
   RouterInterface,
-} from '../../Entities/Interfaces/RouterInterfaces'
+} from 'src/Entities/Interfaces/RouterInterfaces'
 import { Express, Router } from 'express'
 
 export class Navigation implements RouterInterface {
