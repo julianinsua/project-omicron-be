@@ -1,7 +1,7 @@
-import { Express, NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response, Router } from 'express'
 
 export interface RouterInterface {
-  createRouter(routes: Array<RouteInterface>, mainPath: string): Express
+  availableRouters: Array<Router>
 }
 
 export interface RouteInterface {
@@ -20,5 +20,11 @@ export enum HTTP_METHODS {
   get = 'GET',
   delete = 'DELETE',
   put = 'PUT',
+  patch = 'PATCH',
   any = '',
+}
+
+export enum HTTP_CODES {
+  ok = 200,
+  notFound = 400,
 }

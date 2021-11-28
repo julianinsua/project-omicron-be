@@ -2,7 +2,7 @@
   "name": "project-omicron",
   "version": "1.0.0",
   "description": "",
-  "main": "app.ts",
+  "main": "Launcher.ts",
   "scripts": {
     "start": "nodemon --config nodemon.json src/Launcher.ts",
     "debug": "nodemon --config nodemon.json --inspect-brk src/Launcher.ts",
@@ -16,6 +16,7 @@
     "nodemon": "^2.0.15",
     "prettier": "^2.4.1",
     "ts-node": "^10.4.0",
+    "tsconfig-paths": "^3.12.0",
     "typescript": "^4.5.2"
   },
   "dependencies": {

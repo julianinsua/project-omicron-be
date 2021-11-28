@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 import bodyParser from 'body-parser'
-import { Navigation } from 'src/services/http/Router'
-import { mainRoutes } from 'src/services/http/Routes/mainRoutes'
+import { Navigation } from './Router'
+import { mainRoutes } from './Routes/mainRoutes'
 
 export class Server {
   app: Express
@@ -11,17 +11,12 @@ export class Server {
     this.port = 8080 // default port
     this.app = express()
     this.addBodyParser()
-    this.addRouter()
+    this.app.use('/api', Navigation.createRouter('/', mainRoutes)) // Second argument will eventually be an array of routers
   }
 
   private addBodyParser(): void {
     this.app.use(bodyParser.urlencoded({ extended: true }))
     this.app.use(bodyParser.json())
-  }
-
-  private addRouter(): void {
-    const navigation: Navigation = new Navigation(this.app)
-    this.app = navigation.createRouter(mainRoutes, '/')
   }
 
   public startListening(port: Number): void {

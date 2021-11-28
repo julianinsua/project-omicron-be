@@ -4,16 +4,16 @@ import {
   RouteInterface,
   RouterInterface,
 } from 'src/Entities/Interfaces/RouterInterfaces'
-import { Express, Router } from 'express'
+import { Router } from 'express'
 
 export class Navigation implements RouterInterface {
-  app: Express
+  routers: Array<Router>
 
-  public constructor(app: Express) {
-    this.app = app
+  public constructor() {
+    this.routers = []
   }
 
-  public createRouter(routes: Array<RouteInterface>, mainPath: string): Express {
+  public static createRouter(mainPath: string, routes: Array<RouteInterface>): Router {
     const router = Router()
 
     routes.map((route: RouteInterface) => {
@@ -43,12 +43,24 @@ export class Navigation implements RouterInterface {
           // @ts-ignore
           router.put(route.path, namespaceFunctions)
           break
+        case HTTP_METHODS.patch:
+          // @ts-ignore
+          router.patch(route.path, namespaceFunctions)
+          break
         default:
           // @ts-ignore
           router.use(route.path, namespaceFunctions)
       }
     })
-    this.app.use(mainPath, router)
-    return this.app
+    return router
+  }
+
+  protected addRouter(mainPath: string, routes: Array<RouteInterface>): void {
+    const newRouter = Navigation.createRouter(mainPath, routes)
+    this.routers.push(newRouter)
+  }
+
+  public get availableRouters() {
+    return this.routers
   }
 }
