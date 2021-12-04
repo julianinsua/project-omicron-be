@@ -9,7 +9,7 @@ jobs:
       - name: "Checkout limistah:url-shortener"
         uses: actions/checkout@v1
         with:
-          repository: "limistah/url-shortener"
+          repository: "julianinsua/project-omicron-be"
           ref: "master"
 
       # Runs a set of commands using the runners shell
