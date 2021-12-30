@@ -1,6 +1,5 @@
 import {
   HTTP_METHODS,
-  Middleware,
   RouteInterface,
   RouterInterface,
 } from 'src/Entities/Interfaces/RouterInterfaces'
@@ -16,8 +15,8 @@ export class Navigation implements RouterInterface {
   public static createRouter(mainPath: string, routes: Array<RouteInterface>): Router {
     const router = Router()
 
-    routes.map((route: RouteInterface) => {
-      let namespaceFunctions: Array<Middleware | Function> | Function
+    routes.map(async (route: RouteInterface) => {
+      let namespaceFunctions: any
 
       if (route.middlewares) {
         namespaceFunctions = [...route.middlewares]

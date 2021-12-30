@@ -5,7 +5,7 @@ export interface RouterInterface {
 }
 
 export interface RouteInterface {
-  handler: Handler
+  handler: Handler | Promise<Handler>
   path: string
   method?: HTTP_METHODS
   middlewares?: Array<Middleware> // Array of middleware functions, but the return shouldn't be any, I have to investigate this
@@ -13,7 +13,14 @@ export interface RouteInterface {
 
 export type Middleware = (req: Request, res: Response, next: NextFunction) => any
 
-export type Handler = (req: Request, res: Response, next?: NextFunction) => any
+export type Handler = (req: Request, res: Response, next: NextFunction) => any
+
+export interface requestInterface {
+  url: string
+  body?: Object
+  query?: Object
+  params?: Object
+}
 
 export enum HTTP_METHODS {
   post = 'POST',
@@ -26,5 +33,8 @@ export enum HTTP_METHODS {
 
 export enum HTTP_CODES {
   ok = 200,
-  notFound = 400,
+  notFound = 404,
+  notAuthenticated = 401,
+  unprocessableEntity = 422,
+  internal = 500,
 }

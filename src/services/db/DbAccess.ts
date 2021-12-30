@@ -8,7 +8,7 @@ class DbAccess implements DbConnection {
   public constructor() {}
 
   public get connection() {
-    return this.db && this.db
+    return this.db!.db('Omicron')
   }
 
   public async connectToDatabase(): Promise<void> {

@@ -1,5 +1,6 @@
 import { HTTP_METHODS, RouteInterface } from 'src/Entities/Interfaces/RouterInterfaces'
 import { NextFunction, Request, Response } from 'express'
+import Authentication from 'src/UseCases/Authentication'
 
 // Here both the handler and the array of middlewares can be outsourced to other files or classes to
 // fit whatever need might come. The most important thing is that all the routes now live in files
@@ -9,15 +10,27 @@ import { NextFunction, Request, Response } from 'express'
 export const mainRoutes: Array<RouteInterface> = [
   {
     handler: (req: Request, res: Response) => {
-      res.json({ message: 'pepito', pepito: req.body.pepito })
+      console.log('test')
+      return res.json({ message: 'pepito', pepito: req.body.pepito })
     },
     path: '/',
     method: HTTP_METHODS.get,
     middlewares: [
       (req: Request, res: Response, next: NextFunction) => {
+        console.log('pepito')
         req.body.pepito = 'pepito'
         next()
       },
     ],
+  },
+  {
+    handler: Authentication.signup(),
+    path: '/signup',
+    method: HTTP_METHODS.post,
+  },
+  {
+    handler: Authentication.login(),
+    path: '/login',
+    method: HTTP_METHODS.post,
   },
 ]
