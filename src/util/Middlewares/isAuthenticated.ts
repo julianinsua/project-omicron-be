@@ -15,17 +15,24 @@ const isAuthenticated = async (req: Request) => {
     /*
       TODO Not sure about using the service here, this middleware only uses one function but
        depends an all the service class. maybe I can create a helper and use it on the service
+       and here.
     */
     const cryptService = new CryptService()
     decodedToken = await cryptService.verifyToken(token)
-  } catch (e) {
-    // @ts-ignore
-    e.status = HTTP_CODES.internal
+    if (!decodedToken) {
+      throw { error: new Error('Not Authenticated'), status: HTTP_CODES.notAuthenticated }
+    }
+    req.body.userData = decodedToken
+    req.body.isAuthenticated = true
+  } catch (e: any) {
+    if (!e.status) {
+      e.status = HTTP_CODES.internal
+    }
+    if (!e.error) {
+      e.error = new Error('Internal error')
+    }
     throw e
   }
-
-  if (!decodedToken) {
-    const error: any = new Error('Not Authenticated')
-    error.status = HTTP_CODES.notAuthenticated
-  }
 }
+
+export default isAuthenticated
