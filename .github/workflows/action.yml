@@ -1,4 +1,4 @@
-name: "Clone URL Shortener Github Actions"
+name: "Upload to heroku"
  
 on:
   push:
@@ -6,7 +6,7 @@ jobs:
   deploy-url-shortener:
     runs-on: ubuntu-latest
     steps:
-      - name: "Checkout limistah:url-shortener"
+      - name: "Checkout branch"
         uses: actions/checkout@v1
         with:
           repository: "julianinsua/project-omicron-be"

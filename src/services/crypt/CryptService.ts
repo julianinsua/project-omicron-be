@@ -1,24 +1,31 @@
 import { compare, hash } from 'bcryptjs'
 import { sign, verify } from 'jsonwebtoken'
-import User from 'src/Entities/Models/User'
+import { tokenDataInterface } from 'src/Entities/Interfaces/UserInterfaces'
+import { randomBytes } from 'crypto'
+import { RANDOM_BYTES_SIZE } from 'src/util/constants/commonConstants'
 
 class CryptService {
-  public compare(string: string, hash: string): Promise<boolean> {
-    return compare(string, hash)
-  }
-
-  public async generateUserToken(user: User) {
+  public generateUserToken = async (userTokenData: tokenDataInterface) => {
     // @ts-ignore
-    return sign(user.userData, process.env.TOKEN_SECRET, { expiresIn: '1h' })
+    return sign(userTokenData, process.env.TOKEN_SECRET, { expiresIn: '1h' })
   }
 
-  public async verifyToken(token: string): Promise<any> {
+  public generateRandomToken = (): string => {
+    const buffer = randomBytes(RANDOM_BYTES_SIZE)
+    return buffer.toString('hex')
+  }
+
+  public verifyToken = (token: string): Promise<any> => {
     // @ts-ignore
     return verify(token, process.env.TOKEN_SECRET)
   }
 
-  public async hashPassword(password: string): Promise<string> {
+  public hashPassword = (password: string): Promise<string> => {
     return hash(password, 12)
+  }
+
+  public comparePassword = (password: string, hash: string): Promise<boolean> => {
+    return compare(password, hash)
   }
 }
 export default CryptService

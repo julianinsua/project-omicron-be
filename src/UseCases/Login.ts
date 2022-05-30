@@ -20,16 +20,22 @@ class Login extends GenericHandler {
     try {
       const { email, password } = this.req.body as loginInterface
       const userDB = await this.userService.findByEmail(email)
+
       if (!userDB) {
         this.throwError(HTTP_CODES.notAuthenticated, 'Wrong email or password')
       }
+
       const user = User.fromDatabase(userDB)
-      const isEqual = await this.cryptService.compare(password, user.pass)
+      const isEqual = await this.cryptService.comparePassword(password, user.pass)
       if (!isEqual) {
         this.throwError(HTTP_CODES.notAuthenticated, 'Wrong email or password')
       }
-      const token = await this.cryptService.generateUserToken(user)
-      return { token }
+      const token = await this.cryptService.generateUserToken(user.tokenData)
+      return {
+        data: { id: user.id, email: user.email, token, permissions: ['yes'] },
+        status: HTTP_CODES.ok,
+        timestamp: new Date().toISOString(),
+      }
     } catch (e) {
       throw this.genericErrorHandler(e)
     }

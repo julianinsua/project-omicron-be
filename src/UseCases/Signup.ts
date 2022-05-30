@@ -28,22 +28,21 @@ class Signup extends GenericHandler {
 
         const user = User.createUser(email, password)
         if (user instanceof User) {
-          const createdUser = await this.userService.create(user)
-          return new Promise((resolve, reject) => {
-            if (createdUser) {
-              resolve({ status: HTTP_CODES.ok, data: { createdUser } })
-            } else {
-              reject(new Error('Failed to create user'))
-            }
-          })
+          // TODO Send mail to confirm valid email
+          const createdUser = await this.userService.save(user)
+          if (createdUser) {
+            return { status: HTTP_CODES.ok, data: { createdUser } }
+          } else {
+            this.throwError(HTTP_CODES.internal, 'Failed to create user')
+          }
         } else {
           this.throwError(HTTP_CODES.unprocessableEntity, 'Invalid email or password')
         }
       } else {
         this.throwError(HTTP_CODES.unprocessableEntity, 'Passwords are not equal')
       }
-    } catch (e) {
-      throw e
+    } catch (e: any) {
+      this.genericErrorHandler(e)
     }
   }
 }

@@ -33,4 +33,14 @@ export const mainRoutes: Array<RouteInterface> = [
     path: '/login',
     method: HTTP_METHODS.post,
   },
+  {
+    handler: Authentication.forgotPassword(),
+    path: '/forgotPassword',
+    method: HTTP_METHODS.post,
+  },
+  {
+    handler: Authentication.resetPassword(),
+    path: '/resetPassword',
+    method: HTTP_METHODS.post,
+  },
 ]
