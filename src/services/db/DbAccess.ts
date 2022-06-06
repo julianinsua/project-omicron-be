@@ -14,6 +14,10 @@ class DbAccess implements DbConnection {
   public async connectToDatabase(): Promise<void> {
     dotenv.config()
     try {
+      if (!process.env.DB_URL) {
+        throw new Error('Environment error, check environmental variables')
+      }
+
       if (process.env.DB_URL) {
         const client: MongoClient = new MongoClient(process.env.DB_URL)
         this.db = await client.connect()
