@@ -1,3 +1,4 @@
+import 'module-alias/register'
 import { Server } from 'src/services/http/Server'
 import { dbAccess } from 'src/services/db/DbAccess'
 import * as dotenv from 'dotenv'
