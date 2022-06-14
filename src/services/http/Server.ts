@@ -12,6 +12,7 @@ export class Server {
     this.app = express()
     this.addBodyParser()
     this.addCorsHeaders()
+    this.addAuthentication()
     this.app.use('/api', Navigation.createRouter('/', mainRoutes)) // Second argument will eventually be an array of routers
     this.addErrorHandling()
   }
@@ -33,6 +34,12 @@ export class Server {
       res.setHeader('Access-Control-Allow-Origin', '*')
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE')
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+      next()
+    })
+  }
+
+  private addAuthentication() {
+    this.app.use((req, res, next) => {
       next()
     })
   }

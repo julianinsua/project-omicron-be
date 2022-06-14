@@ -5,6 +5,12 @@ import { HTTP_CODES, requestInterface } from 'src/Entities/Interfaces/RouterInte
 import { forgotPasswordInterface } from 'src/Entities/Interfaces/UserInterfaces'
 import User from 'src/Entities/Models/User'
 import CryptService from 'src/services/crypt/CryptService'
+import { validEmail } from 'src/util/constants/regularExpressions'
+import {
+  INVALID_RESET_DATA,
+  INVALID_EMAIL,
+  REQUIRE_EMAIL,
+} from 'src/Entities/Exeptions/ExeptionCodes'
 
 class ForgotPassword extends GenericHandler {
   private cryptService: CryptService
@@ -17,12 +23,28 @@ class ForgotPassword extends GenericHandler {
     this.cryptService = new CryptService()
   }
 
+  private validate() {
+    const { email } = this.req.body as forgotPasswordInterface
+    let validationErrors: Record<string, any> = {}
+    if (!email) validationErrors.email = REQUIRE_EMAIL
+    if (!validEmail.test(email)) validationErrors.email = INVALID_EMAIL
+
+    if (Object.keys(validationErrors).length > 0) {
+      this.throwError(INVALID_RESET_DATA, HTTP_CODES.badRequest, INVALID_EMAIL, {
+        error: { validationErrors },
+      })
+    }
+
+    return
+  }
+
   async handleRequest(): Promise<Object | Error> {
     try {
+      this.validate()
       const { email } = this.req.body as forgotPasswordInterface
       const dbUser = await this.userService.findByEmail(email)
       if (!dbUser) {
-        this.throwError(HTTP_CODES.notFound, "User couldn't be found")
+        this.throwError(INVALID_RESET_DATA, HTTP_CODES.notFound, INVALID_EMAIL)
       }
       const user = User.fromDatabase(dbUser)
 
@@ -40,6 +62,7 @@ class ForgotPassword extends GenericHandler {
       return {
         message: `Reset password email was sent to ${email}`,
         data: { email, resetToken: user.getResetToken },
+        response,
       }
     } catch (e) {
       throw this.genericErrorHandler(e)

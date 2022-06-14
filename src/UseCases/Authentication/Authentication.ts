@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import { Handler, HTTP_CODES } from 'src/Entities/Interfaces/RouterInterfaces'
 import GenericAdapter from 'src/Entities/Models/Server/GenericAdapter'
-import Signup from 'src/UseCases/Signup'
-import Login from 'src/UseCases/Login'
-import ForgotPassword from 'src/UseCases/ForgotPassword'
-import ResetPassword from 'src/UseCases/ResetPassword'
+import Signup from 'src/UseCases/Authentication/SignUp/Signup'
+import Login from 'src/UseCases/Authentication/LogIn/Login'
+import ForgotPassword from 'src/UseCases/Authentication/ForgotPassword/ForgotPassword'
+import ResetPassword from 'src/UseCases/Authentication/ResetPassword/ResetPassword'
 
 class Authentication extends GenericAdapter {
   public static signup(): Handler {
@@ -48,6 +48,7 @@ class Authentication extends GenericAdapter {
       }
     }
   }
+
   public static resetPassword(): Handler {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {

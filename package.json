@@ -9,10 +9,10 @@
   "scripts": {
     "start": "node dist/Launcher.js",
     "postinstall": "tsc",
-    "startDev": "nodemon --config nodemon.json src/Launcher.ts",
+    "startDev": "nodemon --config nodemon.json --exec typescript-module-alias src/Launcher.ts",
     "debug": "nodemon --config nodemon.json --inspect-brk src/Launcher.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc --build"
+    "build": "typescript-module-alias-build src"
   },
   "keywords": [],
   "author": "",
@@ -35,12 +35,9 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "module-alias": "^2.2.2",
     "mongodb": "^4.2.0",
     "nodemailer": "^6.7.2",
-    "nodemailer-sendgrid-transport": "^0.2.0"
-  },
-  "_moduleAliases": {
-    "src": "dist/"
+    "nodemailer-sendgrid-transport": "^0.2.0",
+    "typescript-module-alias": "^2.1.0"
   }
 }
