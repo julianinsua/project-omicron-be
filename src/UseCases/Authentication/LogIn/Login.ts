@@ -3,8 +3,19 @@ import { HTTP_CODES, requestInterface } from 'src/Entities/Interfaces/RouterInte
 import UserService from 'src/services/db/UserService'
 import CryptService from 'src/services/crypt/CryptService'
 import { loginInterface } from 'src/Entities/Interfaces/UserInterfaces'
-import { Error } from 'src/Entities/Interfaces/CommonInterfaces'
 import User from 'src/Entities/Models/User'
+import { validEmail, validPassword } from 'src/util/constants/regularExpressions'
+import {
+  INVALID_EMAIL,
+  INVALID_LOGIN,
+  INVALID_LOGIN_MSG,
+  INVALID_PASSWORD,
+  REQUIRE_EMAIL,
+  REQUIRE_PASSWORD,
+  WRONG_LOGIN_DATA,
+  WRONG_LOGIN_DATA_MSG,
+} from 'src/Entities/Exeptions/ExeptionCodes'
+import BaseError from 'src/Entities/Exeptions/BaseError'
 
 class Login extends GenericHandler {
   userService: UserService
@@ -16,19 +27,37 @@ class Login extends GenericHandler {
     this.cryptService = new CryptService()
   }
 
-  async handleRequest(): Promise<Object | Error> {
+  private validate() {
+    const { email, password } = this.req.body as loginInterface
+    const validationErrors: Record<string, any> = {}
+    if (!email) validationErrors.email = REQUIRE_EMAIL
+    if (!password) validationErrors.password = REQUIRE_PASSWORD
+    if (!validEmail.test(email)) validationErrors.email = INVALID_EMAIL
+    if (!validPassword.test(password)) validationErrors.password = INVALID_PASSWORD
+
+    if (Object.keys(validationErrors).length > 0) {
+      this.throwError(INVALID_LOGIN, HTTP_CODES.badRequest, INVALID_LOGIN_MSG, {
+        error: { validationErrors },
+      })
+    }
+
+    return
+  }
+
+  async handleRequest(): Promise<Object | BaseError> {
     try {
+      this.validate()
       const { email, password } = this.req.body as loginInterface
       const userDB = await this.userService.findByEmail(email)
 
       if (!userDB) {
-        this.throwError(HTTP_CODES.notAuthenticated, 'Wrong email or password')
+        this.throwError(INVALID_LOGIN, HTTP_CODES.notAuthenticated, INVALID_LOGIN_MSG)
       }
 
       const user = User.fromDatabase(userDB)
       const isEqual = await this.cryptService.comparePassword(password, user.pass)
       if (!isEqual) {
-        this.throwError(HTTP_CODES.notAuthenticated, 'Wrong email or password')
+        this.throwError(WRONG_LOGIN_DATA, HTTP_CODES.notAuthenticated, WRONG_LOGIN_DATA_MSG)
       }
       const token = await this.cryptService.generateUserToken(user.tokenData)
       return {

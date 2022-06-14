@@ -1,37 +1,42 @@
-import { Request } from 'express'
-import { HTTP_CODES } from 'src/Entities/Interfaces/RouterInterfaces'
+import { NextFunction, Request, Response } from 'express'
 import CryptService from 'src/services/crypt/CryptService'
+import notAuthenticatedError from 'src/Entities/Exeptions/NotAuthenticatedError'
+import {
+  INTERNAL_ERROR,
+  INTERNAL_ERROR_MSG,
+  INVALID_TOKEN,
+  INVALID_TOKEN_MSG,
+  NO_TOKEN,
+  NO_TOKEN_MSG,
+} from 'src/Entities/Exeptions/ExeptionCodes'
+import BaseError from 'src/Entities/Exeptions/BaseError'
+import InternalError from 'src/Entities/Exeptions/InternalError'
+import NotAuthenticatedError from 'src/Entities/Exeptions/NotAuthenticatedError'
 
-const isAuthenticated = async (req: Request) => {
+const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader: any = req.get('Authorization')
 
   if (!authHeader) {
-    throw { error: new Error('Not Authenticated'), status: HTTP_CODES.notAuthenticated }
+    throw { error: new notAuthenticatedError(NO_TOKEN, NO_TOKEN_MSG) }
   }
 
-  const token = authHeader.split(' ')[1]
-  let decodedToken: string
   try {
-    /*
-      TODO Not sure about using the service here, this middleware only uses one function but
-       depends an all the service class. maybe I can create a helper and use it on the service
-       and here.
-    */
-    const cryptService = new CryptService()
-    decodedToken = await cryptService.verifyToken(token)
+    const [, token] = authHeader.split(' ')
+    let decodedToken: string
+
+    decodedToken = await CryptService.verifyToken(token)
+
     if (!decodedToken) {
-      throw { error: new Error('Not Authenticated'), status: HTTP_CODES.notAuthenticated }
+      throw new NotAuthenticatedError(INVALID_TOKEN, INVALID_TOKEN_MSG)
     }
     req.body.userData = decodedToken
     req.body.isAuthenticated = true
+    return next()
   } catch (e: any) {
-    if (!e.status) {
-      e.status = HTTP_CODES.internal
+    if (e instanceof BaseError) {
+      throw e
     }
-    if (!e.error) {
-      e.error = new Error('Internal error')
-    }
-    throw e
+    throw new InternalError(INTERNAL_ERROR, false, INTERNAL_ERROR_MSG, { error: e })
   }
 }
 

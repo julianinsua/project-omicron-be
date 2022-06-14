@@ -15,7 +15,7 @@ class CryptService {
     return buffer.toString('hex')
   }
 
-  public verifyToken = (token: string): Promise<any> => {
+  public static verifyToken = (token: string): Promise<any> => {
     // @ts-ignore
     return verify(token, process.env.TOKEN_SECRET)
   }
