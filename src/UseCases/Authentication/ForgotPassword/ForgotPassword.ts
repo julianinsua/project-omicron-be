@@ -16,7 +16,7 @@ class ForgotPassword extends GenericHandler {
   private cryptService: CryptService
   private userService: UserService
 
-  public constructor(req: requestInterface) {
+  public constructor(req?: requestInterface) {
     super(req)
 
     this.userService = new UserService()
@@ -24,7 +24,7 @@ class ForgotPassword extends GenericHandler {
   }
 
   private validate() {
-    const { email } = this.req.body as forgotPasswordInterface
+    const { email } = this.req?.body as forgotPasswordInterface
     let validationErrors: Record<string, any> = {}
     if (!email) validationErrors.email = REQUIRE_EMAIL
     if (!validEmail.test(email)) validationErrors.email = INVALID_EMAIL
@@ -41,10 +41,12 @@ class ForgotPassword extends GenericHandler {
   async handleRequest(): Promise<Object | Error> {
     try {
       this.validate()
-      const { email } = this.req.body as forgotPasswordInterface
+      const { email } = this.req?.body as forgotPasswordInterface
       const dbUser = await this.userService.findByEmail(email)
       if (!dbUser) {
-        this.throwError(INVALID_RESET_DATA, HTTP_CODES.notFound, INVALID_EMAIL)
+        this.throwError(INVALID_RESET_DATA, HTTP_CODES.notFound, INVALID_EMAIL, {
+          error: { email: INVALID_EMAIL },
+        })
       }
       const user = User.fromDatabase(dbUser)
 
@@ -56,12 +58,12 @@ class ForgotPassword extends GenericHandler {
         from: 'recover@omicronproject.com',
         to: email,
         subject: 'Reset your password from project Omicron',
-        body: `<p>Oops! You forgot your password. Don't worry, we have your back. Click on this <a href='${user.getResetToken}'>link</a> and choose a new one</p>`,
+        body: `<p>Oops! You forgot your password. Don't worry, we have your back. Click on this <a href='${process.env.FE_URL}/resetPassword/${user.getResetToken}'>link</a> and choose a new one</p>`,
       }
       const response = await mailingService.sendMail(emailData)
       return {
         message: `Reset password email was sent to ${email}`,
-        data: { email, resetToken: user.getResetToken },
+        data: { email },
         response,
       }
     } catch (e) {

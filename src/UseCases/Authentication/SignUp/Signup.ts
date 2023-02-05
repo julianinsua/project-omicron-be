@@ -1,10 +1,11 @@
-import CryptService from 'src/services/crypt/CryptService'
-import UserService from 'src/services/db/UserService'
-import { mailingService } from 'src/services/mail/MailingService'
 import { GenericHandler } from 'src/Entities/Models/Server/GenericHandler'
 import User from 'src/Entities/Models/User'
 import { signupInterface } from 'src/Entities/Interfaces/UserInterfaces'
 import { HTTP_CODES, requestInterface } from 'src/Entities/Interfaces/RouterInterfaces'
+import { mailingService } from 'src/services/mail/MailingService'
+import CryptService from 'src/services/crypt/CryptService'
+import UserService from 'src/services/db/UserService'
+import { validateEmail, validatePassword } from 'src/services/validation/validationService'
 import {
   INTERNAL_ERROR,
   INVALID_SIGNUP_DATA,
@@ -14,37 +15,48 @@ import {
   USER_IS_REGISTRED,
   USER_IS_REGISTRED_MSG,
 } from 'src/Entities/Exeptions/ExeptionCodes'
+
 class Signup extends GenericHandler {
   userService: UserService
   cryptService: CryptService
 
-  constructor(req: requestInterface) {
+  constructor(req?: requestInterface) {
     super(req)
     this.userService = new UserService()
     this.cryptService = new CryptService()
   }
 
   private validate() {
-    const { password, repeatPassword } = this.req.body as signupInterface
-    let validationErrors: Record<string, any> = {}
+    const { email, password, repeatPassword } = this.req?.body as signupInterface
+    const validationErrors: Record<string, any> = Object.assign(
+      {},
+      validateEmail(email),
+      validatePassword(password)
+    )
     if (password !== repeatPassword) {
       validationErrors.password = MISMATCH_PASSWORDS
     }
 
     if (Object.keys(validationErrors).length > 0) {
-      this.throwError(INVALID_SIGNUP_DATA, HTTP_CODES.badRequest, INVALID_SIGNUP_DATA_MSG)
+      this.throwError(INVALID_SIGNUP_DATA, HTTP_CODES.badRequest, INVALID_SIGNUP_DATA_MSG, {
+        error: { validationErrors },
+      })
     }
   }
 
   async handleRequest() {
     try {
       this.validate()
-      const { email, password } = this.req.body as signupInterface
+      const { email, password } = this.req?.body as signupInterface
 
       const existingUser = await this.userService.findByEmail(email)
 
       if (existingUser) {
-        this.throwError(USER_IS_REGISTRED, HTTP_CODES.unprocessableEntity, USER_IS_REGISTRED_MSG)
+        this.throwError(USER_IS_REGISTRED, HTTP_CODES.unprocessableEntity, USER_IS_REGISTRED_MSG, {
+          error: { email: USER_IS_REGISTRED },
+          name: USER_IS_REGISTRED,
+          message: USER_IS_REGISTRED_MSG,
+        })
       }
 
       const user = User.createUser(email, password)
@@ -73,7 +85,7 @@ class Signup extends GenericHandler {
 
       return { status: HTTP_CODES.ok, data: { createdUser, mailingResponse } }
     } catch (e: any) {
-      this.genericErrorHandler(e)
+      throw this.genericErrorHandler(e)
     }
   }
 }

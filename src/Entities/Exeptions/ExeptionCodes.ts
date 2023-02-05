@@ -1,11 +1,12 @@
 // GENERICS
-export const INVALID_EMAIL = 'Invalid email'
+export const INVALID_EMAIL = 'invalidEmail'
 export const REQUIRE_EMAIL = 'emailRequired'
 export const REQUIRE_EMAIL_MSG = 'Email is required'
-export const INVALID_PASSWORD = 'Invalid password'
-export const REQUIRE_PASSWORD = 'Password is required'
-export const MISMATCH_PASSWORDS = 'Passwords must match'
+export const INVALID_PASSWORD = 'invalidPassword'
+export const REQUIRE_PASSWORD = 'requiredPasword'
+export const MISMATCH_PASSWORDS = 'mismatchPasswords'
 
+export const NOT_FOUND = 'notFoundError'
 export const ENTITY_NOT_FOUND = 'Entity not found'
 export const UNABLE_TO_CREATE_ENTITY = "Couldn't create Entity"
 export const INTERNAL_ERROR = 'internalError'
@@ -37,3 +38,7 @@ export const INVALID_TOKEN_MSG = 'Token is invalid'
 // isAllowed Middleware
 export const NOT_ALLOWED = 'notAllowed'
 export const NOT_ALLOWED_MSG = 'You lack the permissions for this action'
+
+// Organization
+export const ORG_LIST_ERROR = 'orgListError'
+export const ORG_LIST_ERROR_MSG = 'Error while listing orgs'

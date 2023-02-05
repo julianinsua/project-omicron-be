@@ -4,13 +4,13 @@
   "description": "",
   "main": "Launcher.ts",
   "engines": {
-    "node": "18.2.0"
+    "node": "18.10.0"
   },
   "scripts": {
     "start": "node dist/Launcher.js",
     "postinstall": "tsc",
     "startDev": "nodemon --config nodemon.json --exec typescript-module-alias src/Launcher.ts",
-    "debug": "nodemon --config nodemon.json --inspect-brk src/Launcher.ts",
+    "debug": "node -r ts-node/register -r tsconfig-paths/register --inspect src/Launcher.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "typescript-module-alias-build src"
   },
@@ -19,7 +19,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^16.11.10",
-    "nodemon": "^2.0.15",
+    "nodemon": "^2.0.20",
     "prettier": "^2.4.1",
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.12.0",

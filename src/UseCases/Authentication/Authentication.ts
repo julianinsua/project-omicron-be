@@ -1,5 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
-import { Handler, HTTP_CODES } from 'src/Entities/Interfaces/RouterInterfaces'
+import { Handler } from 'src/Entities/Interfaces/RouterInterfaces'
 import GenericAdapter from 'src/Entities/Models/Server/GenericAdapter'
 import Signup from 'src/UseCases/Authentication/SignUp/Signup'
 import Login from 'src/UseCases/Authentication/LogIn/Login'
@@ -8,59 +7,23 @@ import ResetPassword from 'src/UseCases/Authentication/ResetPassword/ResetPasswo
 
 class Authentication extends GenericAdapter {
   public static signup(): Handler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const signUp = new Signup(this.getRequest(req))
-        const response = await signUp.handleRequest()
-        res.status(HTTP_CODES.ok).json(response)
-      } catch (e) {
-        if (e) {
-          next(e)
-        }
-      }
-    }
+    const signUp = new Signup()
+    return this.createHandler(signUp)
   }
 
   public static login(): Handler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const logIn = new Login(this.getRequest(req))
-        const response = await logIn.handleRequest()
-        res.status(HTTP_CODES.ok).json(response)
-      } catch (e) {
-        if (e) {
-          next(e)
-        }
-      }
-    }
+    const logIn = new Login()
+    return this.createHandler(logIn)
   }
 
   public static forgotPassword(): Handler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const forgotPassword = new ForgotPassword(this.getRequest(req))
-        const response = await forgotPassword.handleRequest()
-        res.status(HTTP_CODES.ok).json(response)
-      } catch (e) {
-        if (e) {
-          next(e)
-        }
-      }
-    }
+    const forgotPassword = new ForgotPassword()
+    return this.createHandler(forgotPassword)
   }
 
   public static resetPassword(): Handler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const resetPassword = new ResetPassword(this.getRequest(req))
-        const response = await resetPassword.handleRequest()
-        res.status(HTTP_CODES.ok).json(response)
-      } catch (e) {
-        if (e) {
-          next(e)
-        }
-      }
-    }
+    const resetPassword = new ResetPassword()
+    return this.createHandler(resetPassword)
   }
 }
 

@@ -46,8 +46,12 @@ export class Server {
 
   private addErrorHandling(): void {
     this.app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+      console.log('Express error handler')
       console.log(error)
-      res.status(error.status).json({ data: error?.error?.toString(), status: error?.status })
+      return res.status(error.statusCode ?? 500).json({
+        data: error?.data || { name: error.name, msg: error?.message },
+        status: error?.statusCode,
+      })
     })
   }
 }

@@ -1,6 +1,7 @@
-import { HTTP_METHODS, RouteInterface } from 'src/Entities/Interfaces/RouterInterfaces'
 import { NextFunction, Request, Response } from 'express'
-import Authentication from '../../../UseCases/Authentication/Authentication'
+import { HTTP_METHODS, RouteInterface } from 'src/Entities/Interfaces/RouterInterfaces'
+import Authentication from 'src/UseCases/Authentication/Authentication'
+import OrganizationRouter from './orgRoutes'
 
 // Here both the handler and the array of middlewares can be outsourced to other files or classes to
 // fit whatever need might come. The most important thing is that all the routes now live in files
@@ -41,5 +42,10 @@ export const mainRoutes: Array<RouteInterface> = [
     handler: Authentication.resetPassword(),
     path: '/resetPassword',
     method: HTTP_METHODS.post,
+  },
+  {
+    handler: OrganizationRouter,
+    path: '/org',
+    method: HTTP_METHODS.any,
   },
 ]

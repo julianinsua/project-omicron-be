@@ -8,6 +8,7 @@ if (process.env.NODE_ENV !== 'development') {
 
 const init = async () => {
   await dbAccess.connectToDatabase()
+
   const port = parseInt(process?.env?.PORT || '8080')
   new Server().startListening(port)
   console.log('SERVER ACTIVE')

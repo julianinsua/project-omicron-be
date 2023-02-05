@@ -16,14 +16,14 @@ class ResetPassword extends GenericHandler {
   cryptService: CryptService
   userService: UserService
 
-  constructor(req: requestInterface) {
+  constructor(req?: requestInterface) {
     super(req)
     this.userService = new UserService()
     this.cryptService = new CryptService()
   }
 
   private validate() {
-    const { password, repeatPassword } = this.req.body as resetPasswordInterface
+    const { password, repeatPassword } = this.req?.body as resetPasswordInterface
     let validationErrors: Record<string, any> = {}
     if (password !== repeatPassword) {
       validationErrors.password = MISMATCH_PASSWORDS
@@ -41,7 +41,7 @@ class ResetPassword extends GenericHandler {
   async handleRequest(): Promise<Object | Error> {
     try {
       this.validate()
-      const { token, email, password } = this.req.body as resetPasswordInterface
+      const { token, email, password } = this.req?.body as resetPasswordInterface
 
       const dbUser = await this.userService.findByEmail(email)
       if (!dbUser) {

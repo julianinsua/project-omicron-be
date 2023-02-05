@@ -1,0 +1,25 @@
+{
+  "configurations": {
+    "run": {
+      "adapter": "vscode-node",
+      "filetypes": ["javascript", "typescript"],
+      "breakpoints": {
+        "exception": {
+          "all": "N",
+          "uncaught": "N"
+        }
+      },
+      "configuration": {
+        "name": "Attach to Process",
+        "type": "node",
+        "request": "launch",
+        "runtimeExecutable": "node",
+        "runtimeArgs": ["-r", "ts-node/register", "-r", "tsconfig-paths/register"],
+        "args": ["${workspaceRoot}/src/Launcher.ts"],
+        "console": "integratedTerminal",
+        "smartStep": true,
+        "skipFiles": ["<node_internals>/**/*.js", "${workspaceRoot}/node_modules/**/*.js"]
+      }
+    }
+  }
+}
